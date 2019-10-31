@@ -7,12 +7,24 @@ public class Notify {
 
     public static void PrintType(String out) {
         try {
-            Thread.sleep(250);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         if (GUI.state)
             GUI.print(out);
+        else
+            System.out.println(out);
+    }
+
+    public static void PrintPower(String out) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (GUI.state)
+            GUI.printPower(out);
         else
             System.out.println(out);
     }
@@ -49,6 +61,15 @@ public class Notify {
     }
 
     /*
+     ** Battle
+     */
+
+    public static void PowerLevel(int vigor, int eVigor, Enemy enemy) {
+        String out = "\n" + enemy.fighterType + " Power Level: " + eVigor + "\nHero Power Level: " + vigor;
+        PrintPower(out);
+    }
+
+    /*
      ** Enemies
      */
     public static void EnemyAppear(Enemy enemy) {
@@ -62,7 +83,7 @@ public class Notify {
     }
 
     public static void EnemyFailure(Enemy enemy) {
-        String out = "\nYou have been eviscerated by the " + enemy.fighterType + ".";
+        String out = "\nYou have been eviscerated by the " + enemy.fighterType + ".\n\nGAME OVER";
         PrintType(out);
     }
 
@@ -73,11 +94,6 @@ public class Notify {
 
     public static void EnemyRunFail(Enemy enemy) {
         String out = "\nThe " + enemy.fighterType + " is too quick, there is no escape. You must fight.";
-        PrintType(out);
-    }
-
-    public static void EnemyPowerLevel(int vigor) {
-        String out = "\nEnemy Power Level: " + vigor;
         PrintType(out);
     }
 
@@ -99,24 +115,29 @@ public class Notify {
 
     public static void HeroClass() {
         String out = "\n" + "Please enter your Hero's class:" + "\n";
+        out += "\n" + "          Paladin  Rogue    Wizard" + "\n" + "Hit Points  100     50       50" + "\n"
+                + "Defence     50      50       100" + "\n" + "Attack      50      100      50\n";
         PrintType(out);
     }
 
-    public static void HeroPowerLevel(int vigor) {
-        String out = "Hero Power Level: " + vigor;
+    public static void GainedExp(int exp) {
+        String out = "\n" + "Exp points: " + exp;
         PrintType(out);
     }
 
     public static void HeroStats(Hero hero) {
-        String out = "Name: "+ hero.name +"\nLevel: "+hero.level+" Exp: "+hero.exp+"\nMaxHP: "+hero.maxHp+" HP: "+hero.hp+"\nAtt: "+hero.att+" Def: "+hero.def+"\n";
+        String out = "\nName: " + hero.name + "\nLevel: " + hero.level + " Exp: " + hero.exp + "\nMaxHP: " + hero.maxHp
+                + " HP: " + hero.hp + "\nAtt: " + hero.att + " Def: " + hero.def + "\n";
         if (hero.helm != null) {
-            out += "Helm: "+hero.helm.buff+" ";
-        } if (hero.armour != null) {
-           out += "Armour: "+hero.armour.buff+" ";
-        } if (hero.weapon != null) {
-            out += "Weapon: "+hero.weapon.buff;
+            out += "Helm: " + hero.helm.buff + " ";
         }
-        PrintType(out);
+        if (hero.armour != null) {
+            out += "Armour: " + hero.armour.buff + " ";
+        }
+        if (hero.weapon != null) {
+            out += "Weapon: " + hero.weapon.buff;
+        }
+        PrintPower(out);
     }
 
     public static void LevelUp(Hero hero) {
@@ -127,6 +148,16 @@ public class Notify {
     /*
      ** Notifications
      */
+    public static void GUIMap() {
+        String out = "\n" + "Please refer to the minimap in the console" + "\n";
+        PrintType(out);
+    }
+
+    public static void NewOrLoad() {
+        String out = "\n" + "Would you like to CREATE or LOAD a hero" + "\n";
+        PrintType(out);
+    }
+
     public static void HeroNamePrompt() {
         String out = "\n" + "Prompt: Please use between 1 and 32 characters." + "\n";
         PrintType(out);
@@ -143,8 +174,18 @@ public class Notify {
         PrintType(out);
     }
 
+    public static void DirectionChoose() {
+        String out = "\n" + "Please choose a direction to travel: 'N', 'E', 'S', 'W'." + "\n";
+        PrintType(out);
+    }
+
     public static void FightOrRun() {
         String out = "\n" + "Do you choose to FIGHT or RUN?" + "\n";
+        PrintType(out);
+    }
+
+    public static void Victory() {
+        String out = "\n" + "VICTORY" + "\n";
         PrintType(out);
     }
 }

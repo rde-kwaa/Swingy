@@ -12,11 +12,12 @@ public class Battle {
             return true;
         } else {
             return false;
-        } 
+        }
     }
 
     public static boolean run(Enemy enemy) {
         String in = "";
+        Notify.EnemyAppear(enemy);
         while (!(in.equals("FIGHT") || in.equals("RUN"))) {
             Notify.FightOrRun();
             in = Input.get();
@@ -35,10 +36,10 @@ public class Battle {
         }
     }
 
-    public static void getExp(Hero hero, Enemy enemy) {
-        int exp = enemy.vigor(hero) * hero.level;
+    public static void getExp(Hero hero, Enemy enemy, int vigor) {
+        int exp = vigor * hero.level;
         hero.exp = hero.exp + exp;
-        //Show.gainedExp(actualExp, hero);
+        Notify.GainedExp(exp);
         levelUp(hero);
     }
 
@@ -57,16 +58,16 @@ public class Battle {
 
     public static int fight(Hero hero) {
         Enemy enemy = Enemy.getEnemy(hero);
-        Notify.EnemyAppear(enemy);
         if (Battle.run(enemy)) {
             return 2;
-        } 
-        if (enemy.vigor(hero) > hero.vigor()) {
+        }
+        int eVigor = enemy.vigor(hero);
+        if (eVigor > hero.vigor(eVigor, enemy)) {
             Notify.EnemyFailure(enemy);
             return 0;
         } else {
             Notify.EnemyDefeated(enemy);
-            getExp(hero, enemy);
+            getExp(hero, enemy, eVigor);
             levelUp(hero);
             return 1;
         }

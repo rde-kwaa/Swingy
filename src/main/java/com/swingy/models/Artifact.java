@@ -30,6 +30,7 @@ public class Artifact {
             case "WEAPON":
             break;
         }
+        this.type = ArtifactTypes.valueOf(type);
         this.buff = buff;
     }
 

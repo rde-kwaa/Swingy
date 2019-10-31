@@ -10,16 +10,22 @@ import com.swingy.models.Battle;
 import com.swingy.models.FighterTypes;
 import com.swingy.models.Hero;
 import com.swingy.models.Map;
+import com.swingy.views.GUI;
 import com.swingy.views.Notify;
 
 public class App {
     static Hero save;
+
     public static void main(String[] args) {
+        if (args == null)
+            setInterface(args[0]);
+
         Integer play = 1;
-        Hero hero = newHero();
+        Hero hero = start();
         save = hero;
 
         while (play != 0) {
+            Notify.HeroStats(hero);
             Map.printMap(hero);
             if (Map.moveHero(hero)) {
                 if (Battle.encounter()) {
@@ -27,7 +33,6 @@ public class App {
                         Artifact arti = new Artifact(hero);
                         if (arti.buff != 0 && hero.pickUpArtifact(arti)) {
                             hero.equip(arti);
-                            Notify.HeroStats(hero);
                         }
                     }
                 }
@@ -48,7 +53,6 @@ public class App {
         }
 
         while (!(FighterTypes.contains(type))) {
-            Notify.HeroClassDetails();
             Notify.HeroClass();
             type = Input.get();
         }
@@ -59,8 +63,7 @@ public class App {
     static void exit(String input) {
         if (input.equals("EXIT")) {
             if (save != null) {
-                String string = save.name + " " + save.fighterType + " " + save.level + " "
-                        + save.exp;
+                String string = save.name + " " + save.fighterType + " " + save.level + " " + save.exp;
                 if (save.helm != null) {
                     string += " " + save.helm.type + " " + save.helm.buff;
                 }
@@ -69,6 +72,9 @@ public class App {
                 }
                 if (save.weapon != null) {
                     string += " " + save.weapon.type + " " + save.weapon.buff;
+                }
+                if (save.gps != null) {
+                    string += " GPS: " + save.gps.x + " " + save.gps.y;
                 }
                 WriteToFile.writeTheThing(string);
                 try {
@@ -81,11 +87,11 @@ public class App {
         }
     }
 
-    public static Hero setup() {
+    public static Hero start() {
         String input = "";
 
         while (!(input.equals("CREATE") || input.equals("LOAD"))) {
-            //Show.initialScreen();
+            Notify.NewOrLoad();
             input = Input.get();
         }
 
@@ -93,15 +99,35 @@ public class App {
         case "CREATE":
             return newHero();
         case "LOAD":
-            return loadExistingHero();
+            return loadSave();
         default:
             return newHero();
         }
     }
 
-    private static Hero loadExistingHero() {
+    public static void victory() {
+        Notify.Victory();
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
+    }
+
+    static void setInterface(String args) {
+        if (args.toUpperCase().equals("GUI")) {
+            GUI.state = true;
+            GUI.showtime(true);
+        } else if (args.toUpperCase().equals("CONSOLE")) {
+            GUI.state = false;
+            GUI.showtime(false);
+        }
+    }
+
+    private static Hero loadSave() {
         String name, heroType = "";
-        int level, experience, helm = 0, armour = 0, weapon = 0;
+        int level, experience, helm = 0, armour = 0, weapon = 0, x = 0, y = 0;
         int i = 4;
         try {
             BufferedReader reader = new BufferedReader(new FileReader("save.txt"));
@@ -126,21 +152,25 @@ public class App {
                     case "WEAPON":
                         weapon = Integer.parseInt(line.split(" ")[i + 1]);
                         break;
+                    case "GPS:":
+                        x = Integer.parseInt(line.split(" ")[i + 1]);
+                        y = Integer.parseInt(line.split(" ")[i + 2]);
+                        break;
                     }
                     i += 2;
                 }
-                return new Hero(name, heroType, level, experience, helm, armour, weapon);
+                return new Hero(name, heroType, level, experience, helm, armour, weapon, x, y);
             }
             reader.close();
             return newHero();
         } catch (FileNotFoundException e) {
-            //Show.fileNotFoundException();
+            // Show.fileNotFoundException();
             return newHero();
         } catch (IOException e) {
-            //Show.iOException();
+            // Show.iOException();
             return newHero();
         } catch (ArrayIndexOutOfBoundsException e) {
-            //Show.arrayIndexOutOfBoundsException();
+            // Show.arrayIndexOutOfBoundsException();
             return newHero();
         }
 
